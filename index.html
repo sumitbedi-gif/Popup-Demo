@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feature Demo</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+      background: #ffffff;
+      color: #1d1d1f;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Header ── */
+    header {
+      height: 52px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      position: relative;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      color: #1d1d1f;
+    }
+
+    .layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    aside {
+      width: 258px;
+      flex-shrink: 0;
+      background: #f5f5f7;
+      border-right: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 20px 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    aside nav {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .category-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .category-section:not(:first-child) {
+      margin-top: 28px;
+    }
+
+    .category-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #86868b;
+      padding: 0 10px 6px;
+    }
+
+    .feature-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #1d1d1f;
+      cursor: pointer;
+      transition: background 0.12s ease, color 0.12s ease;
+      line-height: 1.45;
+      letter-spacing: -0.1px;
+    }
+
+    .feature-btn:hover {
+      background: rgba(0, 0, 0, 0.055);
+    }
+
+    .feature-btn.active {
+      background: rgba(0, 113, 227, 0.1);
+      color: #0071e3;
+      font-weight: 500;
+    }
+
+    /* ── Main content ── */
+    main {
+      flex: 1;
+      min-height: 0;
+      padding: 52px 60px 48px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .feature-title {
+      font-size: 34px;
+      font-weight: 700;
+      color: #1d1d1f;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+    }
+
+    .feature-description {
+      font-size: 17px;
+      color: #6e6e73;
+      line-height: 1.6;
+      max-width: 520px;
+      font-weight: 400;
+      letter-spacing: -0.1px;
+    }
+
+    .video-wrapper {
+      margin-top: 24px;
+      max-width: 780px;
+      flex-shrink: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.06),
+        0 8px 28px rgba(0, 0, 0, 0.1);
+      background: #000;
+      position: relative;
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* ── Play / pause overlay ── */
+    .play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .play-icon {
+      width: 62px;
+      height: 62px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.16);
+    }
+
+    .video-wrapper:not(.playing) .play-icon {
+      opacity: 1;
+    }
+
+    .video-wrapper.playing.flash .play-icon {
+      opacity: 1;
+    }
+
+    .play-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #1d1d1f;
+      margin-left: 3px;
+    }
+
+    .play-icon .pause-bars {
+      display: none;
+      margin-left: 0;
+    }
+
+    .video-wrapper.playing .play-icon .triangle {
+      display: none;
+    }
+
+    .video-wrapper.playing .play-icon .pause-bars {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>What's New</h1>
+</header>
+
+<div class="layout">
+  <aside>
+    <nav id="feature-nav"></nav>
+  </aside>
+
+  <main>
+    <h2 class="feature-title" id="feature-title">Select a feature</h2>
+    <p class="feature-description" id="feature-description"></p>
+    <div class="video-wrapper" id="video-wrapper">
+      <video id="demo-video" preload="metadata"></video>
+      <div class="play-overlay" id="play-overlay">
+        <div class="play-icon" id="play-icon">
+          <!-- Play triangle -->
+          <svg class="triangle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="5,3 19,12 5,21"/>
+          </svg>
+          <!-- Pause bars -->
+          <svg class="pause-bars" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="3" width="4" height="18"/>
+            <rect x="15" y="3" width="4" height="18"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  /*
+   * ── FEATURE DATA ────────────────────────────────────────────────────
+   * Replace the placeholder titles, descriptions, and video paths below.
+   * Place your .mp4 files in a "videos/" folder next to this index.html.
+   * ────────────────────────────────────────────────────────────────────
+   */
+  const featureCategories = [
+    {
+      name: "New Features",
+      features: [
+        {
+          title: "Templates",
+          description: "Pre-designed templates to jumpstart your workflow. Choose from dozens of professionally crafted layouts or create your own.",
+          video: "videos/feature-1.mp4"
+        },
+        {
+          title: "Filters",
+          description: "Advanced filtering options to organize and display exactly what you need. Sort, search, and filter with multiple criteria.",
+          video: "videos/feature-2.mp4"
+        }
+      ]
+    },
+    {
+      name: "Enhancements",
+      features: [
+        {
+          title: "Drag and Drop",
+          description: "Intuitive drag-and-drop interface for rearranging elements. Works seamlessly across all components.",
+          video: "videos/feature-3.mp4"
+        },
+        {
+          title: "Element Resizing",
+          description: "Automatically adjust sizes based on content and screen. Responsive sizing that just works.",
+          video: "videos/feature-4.mp4"
+        },
+        {
+          title: "Spacers",
+          description: "Control padding and margins with smart spacer elements. Create perfect alignment and breathing room.",
+          video: "videos/feature-5.mp4"
+        },
+        {
+          title: "Pop-up Resizing",
+          description: "Resizable pop-ups and modals that adapt to your content. Drag edges to customize dimensions on the fly.",
+          video: "videos/feature-6.mp4"
+        },
+        {
+          title: "Undo / Redo",
+          description: "Step backwards and forwards through every change with full undo and redo support. Nothing is ever permanently lost.",
+          video: "videos/feature-11.mp4"
+        }
+      ]
+    },
+    {
+      name: "Configurations",
+      features: [
+        {
+          title: "Color Configuration",
+          description: "Full color customization with built-in color picker. Save and reuse color palettes across projects.",
+          video: "videos/feature-7.mp4"
+        },
+        {
+          title: "Padding",
+          description: "Fine-grained padding controls for all elements. Adjust in pixels or use preset spacing scales.",
+          video: "videos/feature-8.mp4"
+        },
+        {
+          title: "Corner Radius",
+          description: "Control border radius for each corner independently. Create sharp, rounded, or mixed corner styles.",
+          video: "videos/feature-9.mp4"
+        },
+        {
+          title: "Carousel Auto Play",
+          description: "Configure carousels to advance automatically on a set interval. Control speed, pause-on-hover, and looping behavior.",
+          video: "videos/feature-10.mp4"
+        }
+      ]
+    }
+  ];
+
+  // Flatten features for indexing
+  const features = [];
+  featureCategories.forEach(cat => {
+    features.push(...cat.features);
+  });
+
+  // ── DOM refs
+  const nav       = document.getElementById("feature-nav");
+  const titleEl   = document.getElementById("feature-title");
+  const descEl    = document.getElementById("feature-description");
+  const video     = document.getElementById("demo-video");
+  const wrapper   = document.getElementById("video-wrapper");
+  const overlay   = document.getElementById("play-overlay");
+
+  let currentIndex = null;
+  let flashTimeout = null;
+
+  // Build menu with categories
+  featureCategories.forEach(category => {
+    const section = document.createElement("div");
+    section.className = "category-section";
+
+    const categoryTitle = document.createElement("div");
+    categoryTitle.className = "category-title";
+    categoryTitle.textContent = category.name;
+    section.appendChild(categoryTitle);
+
+    category.features.forEach((f) => {
+      const flatIndex = features.indexOf(f);
+      const btn = document.createElement("button");
+      btn.className = "feature-btn";
+      btn.textContent = f.title;
+      btn.addEventListener("click", () => loadFeature(flatIndex));
+      section.appendChild(btn);
+    });
+
+    nav.appendChild(section);
+  });
+
+  function loadFeature(index) {
+    // Update active button
+    const buttons = nav.querySelectorAll(".feature-btn");
+    buttons.forEach((b, i) => b.classList.toggle("active", i === index));
+
+    const f = features[index];
+    currentIndex = index;
+
+    titleEl.textContent = f.title;
+    descEl.textContent = f.description;
+
+    // Swap video
+    video.pause();
+    wrapper.classList.remove("playing");
+    video.src = f.video;
+    video.load();
+  }
+
+  // Play/pause toggle via overlay
+  overlay.addEventListener("click", () => {
+    if (currentIndex === null) return;
+    if (video.paused) {
+      video.play().then(() => {
+        wrapper.classList.add("playing");
+        // Flash the icon for 1s then fade out
+        clearTimeout(flashTimeout);
+        wrapper.classList.add("flash");
+        flashTimeout = setTimeout(() => wrapper.classList.remove("flash"), 1000);
+      }).catch(() => {});
+    } else {
+      video.pause();
+      wrapper.classList.remove("playing");
+      wrapper.classList.remove("flash");
+      clearTimeout(flashTimeout);
+    }
+  });
+
+  // Sync state when video ends
+  video.addEventListener("ended", () => {
+    wrapper.classList.remove("playing");
+  });
+
+  // Load first feature on startup
+  loadFeature(0);
+</script>
+
+</body>
+</html>
