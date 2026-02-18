@@ -497,11 +497,16 @@
     titleEl.textContent = f.title;
     descEl.textContent = f.description;
 
-    // Swap video
+    // Swap video and auto-play from beginning
     video.pause();
     wrapper.classList.remove("playing");
+    wrapper.classList.remove("flash");
+    clearTimeout(flashTimeout);
     video.src = f.video;
     video.load();
+    video.play().then(() => {
+      wrapper.classList.add("playing");
+    }).catch(() => {});
   }
 
   // Play/pause toggle via overlay
