@@ -246,11 +246,13 @@
       background: rgba(0, 0, 0, 0.32);
       z-index: 40;
       opacity: 0;
+      pointer-events: none;
       transition: opacity 0.25s ease;
     }
 
     .sidebar-overlay.visible {
       opacity: 1;
+      pointer-events: auto;
     }
 
     /* ── Mobile styles ── */
