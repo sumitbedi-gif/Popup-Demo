@@ -213,16 +213,113 @@
     .video-wrapper.playing .play-icon .pause-bars {
       display: block;
     }
+
+    /* ── Hamburger button (hidden on desktop) ── */
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      margin-right: 8px;
+      border-radius: 6px;
+      color: #1d1d1f;
+      flex-shrink: 0;
+      transition: background 0.12s ease;
+    }
+
+    .hamburger:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .hamburger svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+    }
+
+    /* ── Sidebar backdrop overlay ── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.32);
+      z-index: 40;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .sidebar-overlay.visible {
+      opacity: 1;
+    }
+
+    /* ── Mobile styles ── */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .sidebar-overlay {
+        display: block;
+      }
+
+      aside {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 50;
+        padding-top: 68px;
+        transform: translateX(-100%);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: none;
+        border-right: none;
+      }
+
+      aside.open {
+        transform: translateX(0);
+        box-shadow: 4px 0 32px rgba(0, 0, 0, 0.12);
+      }
+
+      main {
+        padding: 32px 20px 40px;
+      }
+
+      .feature-title {
+        font-size: 26px;
+        letter-spacing: -0.3px;
+      }
+
+      .feature-description {
+        font-size: 15px;
+      }
+
+      .video-wrapper {
+        border-radius: 12px;
+        margin-top: 16px;
+      }
+    }
   </style>
 </head>
 <body>
 
 <header>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="5" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+      <rect x="2" y="9.25" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+      <rect x="2" y="13.5" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+    </svg>
+  </button>
   <h1>What's New</h1>
 </header>
 
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
 <div class="layout">
-  <aside>
+  <aside id="sidebar">
     <nav id="feature-nav"></nav>
   </aside>
 
@@ -335,15 +432,35 @@
   });
 
   // ── DOM refs
-  const nav       = document.getElementById("feature-nav");
-  const titleEl   = document.getElementById("feature-title");
-  const descEl    = document.getElementById("feature-description");
-  const video     = document.getElementById("demo-video");
-  const wrapper   = document.getElementById("video-wrapper");
-  const overlay   = document.getElementById("play-overlay");
+  const nav             = document.getElementById("feature-nav");
+  const titleEl         = document.getElementById("feature-title");
+  const descEl          = document.getElementById("feature-description");
+  const video           = document.getElementById("demo-video");
+  const wrapper         = document.getElementById("video-wrapper");
+  const overlay         = document.getElementById("play-overlay");
+  const hamburger       = document.getElementById("hamburger");
+  const sidebar         = document.getElementById("sidebar");
+  const sidebarOverlay  = document.getElementById("sidebar-overlay");
 
   let currentIndex = null;
   let flashTimeout = null;
+
+  // ── Sidebar open/close (mobile)
+  function openSidebar() {
+    sidebar.classList.add("open");
+    sidebarOverlay.classList.add("visible");
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove("open");
+    sidebarOverlay.classList.remove("visible");
+  }
+
+  hamburger.addEventListener("click", () => {
+    sidebar.classList.contains("open") ? closeSidebar() : openSidebar();
+  });
+
+  sidebarOverlay.addEventListener("click", closeSidebar);
 
   // Build menu with categories
   featureCategories.forEach(category => {
@@ -360,7 +477,7 @@
       const btn = document.createElement("button");
       btn.className = "feature-btn";
       btn.textContent = f.title;
-      btn.addEventListener("click", () => loadFeature(flatIndex));
+      btn.addEventListener("click", () => { loadFeature(flatIndex); closeSidebar(); });
       section.appendChild(btn);
     });
 
