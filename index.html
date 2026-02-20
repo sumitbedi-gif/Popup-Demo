@@ -515,8 +515,7 @@
         {
           title: "Email to Pop Up",
           description: "Transform any email into a beautiful pop-up in seconds. AI reads your email content and generates a ready-to-publish pop-up automatically.",
-          video: "videos/ai-feature-1.mp4",
-          demoUrl: "#" // ← replace with actual URL
+          video: "videos/ai-feature-1.mp4"
         }
       ]
     },
@@ -526,8 +525,7 @@
         {
           title: "AI Rich Text Editor",
           description: "Intelligent text editing powered by AI. Rewrite, summarize, or expand your content with a single click — right inside the editor.",
-          video: "videos/ai-feature-2.mp4",
-          demoUrl: "#" // ← replace with actual URL
+          demoUrl: "https://v0-popup-ai-experiment.vercel.app/popup/feature-announce?name=Team%27s%20Productivity"
         }
       ]
     },
@@ -537,8 +535,7 @@
         {
           title: "AI Health Card",
           description: "Get an AI-powered health report for your campaigns. Surface issues, suggestions, and optimizations automatically after publishing.",
-          video: "videos/ai-feature-3.mp4",
-          demoUrl: "#" // ← replace with actual URL
+          demoUrl: "https://v0-popup-ai-experiment.vercel.app/"
         }
       ]
     }
@@ -626,16 +623,22 @@
       demoBtnEl.classList.add("hidden");
     }
 
-    // Auto-play video from beginning
-    video.pause();
-    wrapper.classList.remove("playing");
-    wrapper.classList.remove("flash");
-    clearTimeout(flashTimeout);
-    video.src = featureObj.video;
-    video.load();
-    video.play().then(() => {
-      wrapper.classList.add("playing");
-    }).catch(() => {});
+    // Show or hide video
+    if (featureObj.video) {
+      wrapper.classList.remove("hidden");
+      video.pause();
+      wrapper.classList.remove("playing");
+      wrapper.classList.remove("flash");
+      clearTimeout(flashTimeout);
+      video.src = featureObj.video;
+      video.load();
+      video.play().then(() => {
+        wrapper.classList.add("playing");
+      }).catch(() => {});
+    } else {
+      video.pause();
+      wrapper.classList.add("hidden");
+    }
   }
 
   // ── Tab switching
