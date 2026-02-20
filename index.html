@@ -23,6 +23,8 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
+    .hidden { display: none !important; }
+
     /* ── Header ── */
     header {
       height: 52px;
@@ -68,6 +70,38 @@
       flex-direction: column;
     }
 
+    /* ── Tab Switcher ── */
+    .tab-switcher {
+      display: flex;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 6px 4px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6e6e73;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      letter-spacing: -0.1px;
+      font-family: inherit;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: #1d1d1f;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12), 0 0.5px 1px rgba(0, 0, 0, 0.08);
+    }
+
+    /* ── Category sections ── */
     .category-section {
       display: flex;
       flex-direction: column;
@@ -142,6 +176,36 @@
       letter-spacing: -0.1px;
     }
 
+    /* ── View Demo button ── */
+    .view-demo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-start;
+      padding: 9px 20px;
+      background: #0071e3;
+      color: #ffffff;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      letter-spacing: -0.1px;
+      transition: background 0.15s ease, transform 0.12s ease;
+      margin-top: 4px;
+    }
+
+    .view-demo-btn:hover {
+      background: #0077ed;
+      transform: translateY(-1px);
+    }
+
+    .view-demo-btn svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
+
+    /* ── Video wrapper ── */
     .video-wrapper {
       margin-top: 24px;
       max-width: 780px;
@@ -322,12 +386,28 @@
 
 <div class="layout">
   <aside id="sidebar">
-    <nav id="feature-nav"></nav>
+    <!-- Tab switcher -->
+    <div class="tab-switcher">
+      <button class="tab-btn active" id="tab-current">Current</button>
+      <button class="tab-btn" id="tab-ai">AI</button>
+    </div>
+
+    <!-- Current features nav -->
+    <nav id="current-nav"></nav>
+
+    <!-- AI features nav -->
+    <nav id="ai-nav" class="hidden"></nav>
   </aside>
 
   <main>
     <h2 class="feature-title" id="feature-title">Select a feature</h2>
     <p class="feature-description" id="feature-description"></p>
+    <a class="view-demo-btn hidden" id="view-demo-btn" href="#" target="_blank" rel="noopener">
+      View Demo
+      <svg viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 11L11 2M11 2H5M11 2V8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
     <div class="video-wrapper" id="video-wrapper">
       <video id="demo-video" preload="metadata"></video>
       <div class="play-overlay" id="play-overlay">
@@ -349,10 +429,7 @@
 
 <script>
   /*
-   * ── FEATURE DATA ────────────────────────────────────────────────────
-   * Replace the placeholder titles, descriptions, and video paths below.
-   * Place your .mp4 files in a "videos/" folder next to this index.html.
-   * ────────────────────────────────────────────────────────────────────
+   * ── CURRENT FEATURE DATA ─────────────────────────────────────────────
    */
   const featureCategories = [
     {
@@ -427,24 +504,63 @@
     }
   ];
 
-  // Flatten features for indexing
-  const features = [];
-  featureCategories.forEach(cat => {
-    features.push(...cat.features);
-  });
+  /*
+   * ── AI FEATURE DATA ──────────────────────────────────────────────────
+   * Replace demoUrl values with actual links when ready.
+   */
+  const aiFeatureCategories = [
+    {
+      name: "Creation",
+      features: [
+        {
+          title: "Email to Pop Up",
+          description: "Transform any email into a beautiful pop-up in seconds. AI reads your email content and generates a ready-to-publish pop-up automatically.",
+          video: "videos/ai-feature-1.mp4",
+          demoUrl: "#" // ← replace with actual URL
+        }
+      ]
+    },
+    {
+      name: "Editing",
+      features: [
+        {
+          title: "AI Rich Text Editor",
+          description: "Intelligent text editing powered by AI. Rewrite, summarize, or expand your content with a single click — right inside the editor.",
+          video: "videos/ai-feature-2.mp4",
+          demoUrl: "#" // ← replace with actual URL
+        }
+      ]
+    },
+    {
+      name: "Post",
+      features: [
+        {
+          title: "AI Health Card",
+          description: "Get an AI-powered health report for your campaigns. Surface issues, suggestions, and optimizations automatically after publishing.",
+          video: "videos/ai-feature-3.mp4",
+          demoUrl: "#" // ← replace with actual URL
+        }
+      ]
+    }
+  ];
 
   // ── DOM refs
-  const nav             = document.getElementById("feature-nav");
-  const titleEl         = document.getElementById("feature-title");
-  const descEl          = document.getElementById("feature-description");
-  const video           = document.getElementById("demo-video");
-  const wrapper         = document.getElementById("video-wrapper");
-  const overlay         = document.getElementById("play-overlay");
-  const hamburger       = document.getElementById("hamburger");
-  const sidebar         = document.getElementById("sidebar");
-  const sidebarOverlay  = document.getElementById("sidebar-overlay");
+  const titleEl        = document.getElementById("feature-title");
+  const descEl         = document.getElementById("feature-description");
+  const demoBtnEl      = document.getElementById("view-demo-btn");
+  const video          = document.getElementById("demo-video");
+  const wrapper        = document.getElementById("video-wrapper");
+  const overlay        = document.getElementById("play-overlay");
+  const hamburger      = document.getElementById("hamburger");
+  const sidebar        = document.getElementById("sidebar");
+  const sidebarOverlay = document.getElementById("sidebar-overlay");
+  const currentNav     = document.getElementById("current-nav");
+  const aiNav          = document.getElementById("ai-nav");
+  const tabCurrent     = document.getElementById("tab-current");
+  const tabAI          = document.getElementById("tab-ai");
 
-  let currentIndex = null;
+  let activeTab = "current";
+  let currentActiveBtn = null;
   let flashTimeout = null;
 
   // ── Sidebar open/close (mobile)
@@ -464,58 +580,87 @@
 
   sidebarOverlay.addEventListener("click", closeSidebar);
 
-  // Build menu with categories
-  featureCategories.forEach(category => {
-    const section = document.createElement("div");
-    section.className = "category-section";
+  // ── Build a nav panel from a category array
+  function buildNav(navEl, categories) {
+    categories.forEach(category => {
+      const section = document.createElement("div");
+      section.className = "category-section";
 
-    const categoryTitle = document.createElement("div");
-    categoryTitle.className = "category-title";
-    categoryTitle.textContent = category.name;
-    section.appendChild(categoryTitle);
+      const categoryTitle = document.createElement("div");
+      categoryTitle.className = "category-title";
+      categoryTitle.textContent = category.name;
+      section.appendChild(categoryTitle);
 
-    category.features.forEach((f) => {
-      const flatIndex = features.indexOf(f);
-      const btn = document.createElement("button");
-      btn.className = "feature-btn";
-      btn.textContent = f.title;
-      btn.addEventListener("click", () => { loadFeature(flatIndex); closeSidebar(); });
-      section.appendChild(btn);
+      category.features.forEach(f => {
+        const btn = document.createElement("button");
+        btn.className = "feature-btn";
+        btn.textContent = f.title;
+        btn.addEventListener("click", () => {
+          loadFeature(f, btn);
+          closeSidebar();
+        });
+        section.appendChild(btn);
+      });
+
+      navEl.appendChild(section);
     });
+  }
 
-    nav.appendChild(section);
-  });
+  buildNav(currentNav, featureCategories);
+  buildNav(aiNav, aiFeatureCategories);
 
-  function loadFeature(index) {
+  // ── Load a feature
+  function loadFeature(featureObj, btnEl) {
     // Update active button
-    const buttons = nav.querySelectorAll(".feature-btn");
-    buttons.forEach((b, i) => b.classList.toggle("active", i === index));
+    if (currentActiveBtn) currentActiveBtn.classList.remove("active");
+    if (btnEl) { btnEl.classList.add("active"); currentActiveBtn = btnEl; }
 
-    const f = features[index];
-    currentIndex = index;
+    titleEl.textContent = featureObj.title;
+    descEl.textContent = featureObj.description;
 
-    titleEl.textContent = f.title;
-    descEl.textContent = f.description;
+    // View Demo button
+    if (featureObj.demoUrl) {
+      demoBtnEl.href = featureObj.demoUrl;
+      demoBtnEl.classList.remove("hidden");
+    } else {
+      demoBtnEl.classList.add("hidden");
+    }
 
-    // Swap video and auto-play from beginning
+    // Auto-play video from beginning
     video.pause();
     wrapper.classList.remove("playing");
     wrapper.classList.remove("flash");
     clearTimeout(flashTimeout);
-    video.src = f.video;
+    video.src = featureObj.video;
     video.load();
     video.play().then(() => {
       wrapper.classList.add("playing");
     }).catch(() => {});
   }
 
-  // Play/pause toggle via overlay
+  // ── Tab switching
+  function switchTab(tab) {
+    activeTab = tab;
+    tabCurrent.classList.toggle("active", tab === "current");
+    tabAI.classList.toggle("active", tab === "ai");
+    currentNav.classList.toggle("hidden", tab !== "current");
+    aiNav.classList.toggle("hidden", tab !== "ai");
+
+    // Auto-select first feature of the newly active tab
+    const firstBtn = (tab === "current" ? currentNav : aiNav).querySelector(".feature-btn");
+    const categories = tab === "current" ? featureCategories : aiFeatureCategories;
+    const firstFeature = categories[0].features[0];
+    if (firstBtn && firstFeature) loadFeature(firstFeature, firstBtn);
+  }
+
+  tabCurrent.addEventListener("click", () => switchTab("current"));
+  tabAI.addEventListener("click", () => switchTab("ai"));
+
+  // ── Play/pause toggle via overlay
   overlay.addEventListener("click", () => {
-    if (currentIndex === null) return;
     if (video.paused) {
       video.play().then(() => {
         wrapper.classList.add("playing");
-        // Flash the icon for 1s then fade out
         clearTimeout(flashTimeout);
         wrapper.classList.add("flash");
         flashTimeout = setTimeout(() => wrapper.classList.remove("flash"), 1000);
@@ -533,8 +678,9 @@
     wrapper.classList.remove("playing");
   });
 
-  // Load first feature on startup
-  loadFeature(0);
+  // ── Load first feature on startup
+  const firstCurrentBtn = currentNav.querySelector(".feature-btn");
+  loadFeature(featureCategories[0].features[0], firstCurrentBtn);
 </script>
 
 </body>
