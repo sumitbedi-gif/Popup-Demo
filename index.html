@@ -319,6 +319,155 @@
       pointer-events: auto;
     }
 
+    /* ── Floating Action Button ── */
+    .fab {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 18px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 980px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+      font-size: 14px;
+      font-weight: 500;
+      color: #1d1d1f;
+      cursor: pointer;
+      transition: box-shadow 0.15s ease, transform 0.12s ease;
+      z-index: 100;
+      font-family: inherit;
+      letter-spacing: -0.1px;
+    }
+
+    .fab:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .fab svg {
+      width: 15px;
+      height: 15px;
+      color: #6e6e73;
+      flex-shrink: 0;
+    }
+
+    /* ── FAB Modal ── */
+    .fab-modal {
+      position: fixed;
+      bottom: 80px;
+      right: 28px;
+      width: 300px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.07);
+      padding: 20px;
+      z-index: 101;
+    }
+
+    .fab-modal-header {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1d1d1f;
+      margin-bottom: 16px;
+      letter-spacing: -0.2px;
+    }
+
+    .fab-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+
+    .fab-field label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #86868b;
+      letter-spacing: 0.01em;
+    }
+
+    .fab-field input,
+    .fab-field textarea {
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #1d1d1f;
+      background: #f5f5f7;
+      outline: none;
+      transition: border-color 0.15s ease, background 0.15s ease;
+      resize: none;
+      letter-spacing: -0.1px;
+    }
+
+    .fab-field input:focus,
+    .fab-field textarea:focus {
+      border-color: #0071e3;
+      background: #ffffff;
+    }
+
+    .fab-field textarea {
+      height: 82px;
+    }
+
+    .fab-send-btn {
+      width: 100%;
+      padding: 10px;
+      background: #0071e3;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      letter-spacing: -0.1px;
+      transition: background 0.15s ease;
+      margin-top: 4px;
+    }
+
+    .fab-send-btn:hover { background: #0077ed; }
+    .fab-send-btn:disabled { background: #86868b; cursor: default; }
+
+    .fab-success {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 0 4px;
+      text-align: center;
+    }
+
+    .fab-success-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(52, 199, 89, 0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+
+    .fab-success p {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1d1d1f;
+      letter-spacing: -0.1px;
+    }
+
+    .fab-success span {
+      font-size: 13px;
+      color: #86868b;
+    }
+
     /* ── Mobile styles ── */
     @media (max-width: 768px) {
       .hamburger {
@@ -425,6 +574,39 @@
       </div>
     </div>
   </main>
+</div>
+
+<!-- Floating Action Button -->
+<button class="fab" id="fab">
+  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M13 1H3C2.45 1 2 1.45 2 2v8c0 .55.45 1 1 1h3l2 2 2-2h3c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1z" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round"/>
+  </svg>
+  Have questions?
+</button>
+
+<!-- FAB Modal -->
+<div class="fab-modal hidden" id="fab-modal">
+  <div id="fab-form-view">
+    <div class="fab-modal-header">Have questions?</div>
+    <div class="fab-field">
+      <label>Who's asking</label>
+      <input type="text" id="fab-name" placeholder="Your name" autocomplete="off" />
+    </div>
+    <div class="fab-field">
+      <label>Question</label>
+      <textarea id="fab-question" placeholder="What would you like to know?"></textarea>
+    </div>
+    <button class="fab-send-btn" id="fab-send">Send now</button>
+  </div>
+  <div class="fab-success hidden" id="fab-success-view">
+    <div class="fab-success-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M4.5 11.5l4.5 4.5 8.5-9" stroke="#34c759" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <p>Question sent!</p>
+    <span>We'll get back to you soon.</span>
+  </div>
 </div>
 
 <script>
@@ -559,6 +741,7 @@
   let activeTab = "current";
   let currentActiveBtn = null;
   let flashTimeout = null;
+  let currentFeatureTitle = "";
 
   // ── Sidebar open/close (mobile)
   function openSidebar() {
@@ -612,6 +795,7 @@
     if (currentActiveBtn) currentActiveBtn.classList.remove("active");
     if (btnEl) { btnEl.classList.add("active"); currentActiveBtn = btnEl; }
 
+    currentFeatureTitle = featureObj.title;
     titleEl.textContent = featureObj.title;
     descEl.textContent = featureObj.description;
 
@@ -684,6 +868,82 @@
   // ── Load first feature on startup
   const firstCurrentBtn = currentNav.querySelector(".feature-btn");
   loadFeature(featureCategories[0].features[0], firstCurrentBtn);
+
+  // ── Floating Action Button
+  const SCRIPT_URL = "https://script.google.com/a/macros/whatfix.com/s/AKfycbzwJufOhgds9hqgahQqbSyqsKKDfPIC8u1jbVJYk952qzGcgZaWjWzbf1KMN2D9-Bs/exec";
+
+  const fabEl          = document.getElementById("fab");
+  const fabModal       = document.getElementById("fab-modal");
+  const fabFormView    = document.getElementById("fab-form-view");
+  const fabSuccessView = document.getElementById("fab-success-view");
+  const fabNameInput   = document.getElementById("fab-name");
+  const fabQuestionInput = document.getElementById("fab-question");
+  const fabSendBtn     = document.getElementById("fab-send");
+
+  fabEl.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = !fabModal.classList.contains("hidden");
+    if (isOpen) {
+      fabModal.classList.add("hidden");
+    } else {
+      // Reset to form view
+      fabFormView.classList.remove("hidden");
+      fabSuccessView.classList.add("hidden");
+      fabSendBtn.disabled = false;
+      fabSendBtn.textContent = "Send now";
+      fabModal.classList.remove("hidden");
+      fabNameInput.focus();
+    }
+  });
+
+  // Close on click outside
+  document.addEventListener("click", (e) => {
+    if (!fabModal.classList.contains("hidden") &&
+        !fabModal.contains(e.target) &&
+        e.target !== fabEl) {
+      fabModal.classList.add("hidden");
+    }
+  });
+
+  // Validation helper
+  function highlightEmpty(el) {
+    el.style.borderColor = "#ff3b30";
+    el.addEventListener("input", () => { el.style.borderColor = ""; }, { once: true });
+  }
+
+  fabSendBtn.addEventListener("click", async () => {
+    const name     = fabNameInput.value.trim();
+    const question = fabQuestionInput.value.trim();
+
+    if (!name || !question) {
+      if (!name)     highlightEmpty(fabNameInput);
+      if (!question) highlightEmpty(fabQuestionInput);
+      return;
+    }
+
+    fabSendBtn.disabled = true;
+    fabSendBtn.textContent = "Sending…";
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({ feature: currentFeatureTitle, name, question })
+      });
+    } catch (_) {}
+
+    // Show success state
+    fabFormView.classList.add("hidden");
+    fabSuccessView.classList.remove("hidden");
+
+    // Auto-close after 2.5s and clear fields
+    setTimeout(() => {
+      fabModal.classList.add("hidden");
+      fabNameInput.value = "";
+      fabQuestionInput.value = "";
+    }, 2500);
+  });
 </script>
 
 </body>
